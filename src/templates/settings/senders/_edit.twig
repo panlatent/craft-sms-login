@@ -1,0 +1,59 @@
+{% extends 'smslogin/_layouts/settings' %}
+
+{% set title = isNewSender ? "New a sender" |t('smslogin') : 'Edit: {name}'|t('smslogin', {name: sender.name})  %}
+{% set fullPageForm = true %}
+{#{% set crumbs = [{#}
+{#    label: 'Schedule'|t('schedule'),#}
+{#    url: url('schedule')#}
+{#}] %}#}
+
+{% import "_includes/forms" as forms %}
+
+{% block content %}
+    <input type="hidden" name="action" value="smslogin/senders/save-sender">
+    <input type="hidden" name="senderId" value="{{ sender.id }}">
+
+    {{ forms.autosuggestField({
+        label: "Name"|t('app'),
+        instructions: "",
+        required: true,
+        id: 'name',
+        name: "name",
+        value: sender.name,
+        errors: sender.getErrors('name'),
+        suggestEnvVars: true
+    }) }}
+
+    {{ forms.autosuggestField({
+        label: "Handle"|t('app'),
+        instructions: "",
+        required: true,
+        id: 'handle',
+        name: "handle",
+        value: sender.handle,
+        errors: sender.getErrors('handle'),
+        suggestEnvVars: true
+    }) }}
+
+    {{ forms.selectField({
+        label: 'Sender Type'|t('smslogin'),
+        name: 'type',
+        value: className(sender),
+        options: senderTypeOptions,
+        toggle: true,
+    }) }}
+
+    {% for senderType in senderTypes %}
+        {% set isCurrent = (senderType == className(sender)) %}
+
+        <div id="{{ senderType|id }}"{% if not isCurrent %} class="hidden"{% endif %}>
+            {% namespace 'types[' ~ senderType ~']' %}
+                {% if isCurrent %}
+                    {{ sender.getSettingsHtml()|raw }}
+                {% else %}
+                    {{ senderInstances[senderType].settingsHtml|raw }}
+                {% endif %}
+            {% endnamespace %}
+        </div>
+    {% endfor %}
+{% endblock %}

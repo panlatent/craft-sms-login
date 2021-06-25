@@ -1,0 +1,17 @@
+{% extends 'smslogin/_layouts/settings' %}
+
+{% set title = "General"|t("app") %}
+{% set fullPageForm = true %}
+{% set settings = craft.smslogin.settings %}
+{% import "_includes/forms" as forms %}
+
+{% block content %}
+{#    {{ forms.lightswitch({#}
+{#        label: "Allow Unregister"|t('aliyun'),#}
+{#        instructions: "Allow a OSS Volume set its Access Key nad Secret Key."|t('aliyun'),#}
+{#        required: false,#}
+{#        id: 'allowVolumeAuthSettings',#}
+{#        name: "allowVolumeAuthSettings",#}
+{#        on: craft.aliyun.settings.allowVolumeAuthSettings,#}
+{#    }) }}#}
+{% endblock %}

@@ -1,2 +1,2 @@
-# craft-sms-login
-CraftCMS SMS login 
+Craft SMS Login
+===============

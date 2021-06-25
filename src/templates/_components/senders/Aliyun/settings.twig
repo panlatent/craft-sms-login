@@ -1,0 +1,76 @@
+{% import "_includes/forms" as forms %}
+
+{{ forms.autosuggestField({
+    label: "AccessKey ID"|t('smslogin'),
+    instructions: "",
+    required: true,
+    name: "accessKeyId",
+    value: sender.accessKeyId,
+    errors: sender.getErrors('accessKeyId'),
+    suggestEnvVars: true
+}) }}
+
+{{ forms.autosuggestField({
+    label: "AccessKey Secret"|t('smslogin'),
+    instructions: "",
+    required: true,
+    id: 'accessKeySecret',
+    name: "accessKeySecret",
+    value: sender.accessKeySecret,
+    errors: sender.getErrors('accessKeySecret'),
+    suggestEnvVars: true
+}) }}
+
+
+{{ forms.autosuggestField({
+    label: "Region ID"|t('smslogin'),
+    instructions: "",
+    required: true,
+    id: 'regionId',
+    name: "regionId",
+    value: sender.regionId,
+    errors: sender.getErrors('regionId'),
+    suggestEnvVars: true
+}) }}
+
+
+{{ forms.autosuggestField({
+    label: "Sign Name"|t('smslogin'),
+    instructions: "",
+    required: true,
+    id: 'signName',
+    name: "signName",
+    value: sender.signName,
+    errors: sender.getErrors('signName'),
+    suggestEnvVars: true
+}) }}
+
+{{ forms.autosuggestField({
+    label: "Template Code"|t('smslogin'),
+    instructions: "",
+    required: true,
+    id: 'templateCode',
+    name: "templateCode",
+    value: sender.templateCode,
+    errors: sender.getErrors('templateCode'),
+    suggestEnvVars: true
+}) }}
+
+{{ forms.autosuggestField({
+    label: "Template Param Template"|t('smslogin'),
+    instructions: "Support access varivables: code[string] / captcha[object] / sender[object] etc.",
+    required: true,
+    id: 'templateParam',
+    name: "templateParam",
+    value: sender.templateParamTemplate,
+    errors: sender.getErrors('templateParamTemplate'),
+    suggestEnvVars: true
+}) }}
+
+{{ forms.lightswitch({
+    label: "Secure Connection (https)"|t('smslogin'),
+    instructions: "",
+    id: 'secure',
+    name: "secure",
+    on: sender.secure,
+}) }}

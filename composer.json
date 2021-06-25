@@ -1,0 +1,40 @@
+{
+    "name": "panlatent/craft-sms-login",
+    "description": "SMS login for CraftCMS",
+    "type": "craft-plugin",
+    "version": "0.1.0",
+    "require": {
+        "php": ">=7.2.5",
+        "craftcms/cms": "^3.2",
+        "alibabacloud/dysmsapi-20170525": "1.0.1"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "panlatent",
+            "email": "panlatent@gmail.com",
+            "homepage": "https://panlatent.com/"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "panlatent\\craft\\smslogin\\": "src/"
+        }
+    },
+    "support": {
+        "docs": "https://github.com/panlatent/craft-sms-login/blob/master/README.md",
+        "issues": "https://github.com/panlatent/craft-sms-login/issues"
+    },
+    "minimum-stability": "stable",
+    "extra": {
+        "name": "Smslogin",
+        "handle": "smslogin",
+        "hasCpSettings": true,
+        "hasCpSection": false,
+        "changelogUrl": "https://raw.githubusercontent.com/panlatent/craft-sms-login/master/CHANGELOG.md",
+        "class": "panlatent\\craft\\smslogin\\Plugin",
+        "branch-alias": {
+            "dev-master": "0.1.x-dev"
+        }
+    }
+}

@@ -1,0 +1,58 @@
+{% extends 'smslogin/_layouts/settings' %}
+
+{% set title = "Senders"|t('smslogin') %}
+
+{% set senders = craft.smslogin.senders.getAllSenders() %}
+
+{% block actionButton %}
+    <a href="{{ url('smslogin/settings/senders/new') }}"
+       class="btn submit icon add">{{ "New Sender"|t('smslogin') }}</a>
+{% endblock %}
+
+{% block content %}
+    <div id="nosenders" {% if senders %} class="hidden"{% endif %}>
+        <p>{{ "No senders exist yet."|t('smslogin') }}</p>
+    </div>
+
+    {% if senders|length %}
+        {% set sortable  = (senders|length > 1) %}
+        <table id="senders" class="data fullwidth collapsible">
+            <thead>
+            <th scope="col">{{ "Name"|t('app') }}</th>
+            <th scope="col">{{ "Handle"|t('app') }}</th>
+            <th scope="col">{{ "Type"|t('app') }}</th>
+            {% if sortable %}
+                <td class="thin"></td>{% endif %}
+            <td class="thin"></td>
+            </thead>
+            <tbody>
+            {% for sender in senders %}
+                <tr data-id="{{ sender.id }}" data-name="{{ sender }}">
+                    <th scope="row" data-title="{{ 'Name'|t('app') }}"><a
+                                href="{{ url('smslogin/settings/senders/' ~ sender.id) }}">{{ sender }}</a></th>
+                    <td data-title="{{ 'Handle'|t('app') }}">{{ sender.handle }}</td>
+                    <td data-title="{{ 'Type'|t('app') }}">{{ sender.displayName|title|t('app') }}</td>
+                    {% if sortable %}
+                        <td class="thin"><a class="move icon" title="{{ 'Reorder'|t('app') }}" role="button"></a>
+                        </td>{% endif %}
+                    <td class="thin"><a class="delete icon" title="{{ 'Delete'|t('app') }}" role="button"></a></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+{% endblock %}
+
+{% js %}
+    var adminTable = new Craft.AdminTable({
+        tableSelector: '#senders',
+        noItemsSelector: '#nosenders',
+        sortable: true,
+        deleteAction: 'smslogin/senders/delete-sender',
+        onDeleteItem: function() {
+            if (adminTable.totalItems == 0) {
+                $('#nav-entries').remove();
+            }
+        }
+    });
+{% endjs %}

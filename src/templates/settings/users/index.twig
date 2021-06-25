@@ -1,0 +1,54 @@
+{% extends 'smslogin/_layouts/settings' %}
+
+{% set title = "Users"|t("app") %}
+{% set fullPageForm = true %}
+{% set settings = craft.smslogin.settings %}
+{% import "_includes/forms" as forms %}
+
+
+{% block content %}
+    {{ actionInput("smslogin/users/save-settings") }}
+    {{ csrfInput() }}
+
+    {{ forms.autosuggestField({
+        label: "User phone number field handle"|t('smslogin'),
+        instructions: "",
+        required: true,
+        id: 'phoneNumberFieldHandle',
+        name: "phoneNumberFieldHandle",
+        value: settings.phoneNumberFieldHandle,
+        errors: settings.getErrors('phoneNumberFieldHandle'),
+        suggestEnvVars: true
+    }) }}
+
+    {{ forms.checkboxField({
+        label: 'Use phone number as username'|t('smslogin'),
+        name: 'usePhoneNumberAsUsername',
+        checked: settings.usePhoneNumberAsUsername,
+    }) }}
+
+    {{ forms.textField({
+        label: 'Unregister return URL'|t('smslogin'),
+        name: 'unregisterReturnUrl',
+        value: settings.unregisterReturnUrl,
+    }) }}
+
+    {{ forms.textField({
+        label: 'Default register email'|t('smslogin'),
+        name: 'defaultRegisterEmail',
+        value: settings.defaultRegisterEmail,
+    }) }}
+
+    {% set groups = [{ label: "None"|t('app'), value: '' }] %}
+    {% for group in craft.app.userGroups.getAllGroups() %}
+        {% set groups = groups|merge([{ label: group.name, value: group.uid }]) %}
+    {% endfor %}
+
+    {{ forms.selectField({
+        label: "Default User Group"|t('app'),
+        instructions: "Choose a user group that publicly-registered members will be added to by default."|t('app'),
+        name: 'registerUserGroup',
+        options: groups,
+        value: settings.registerUserGroup
+    }) }}
+{% endblock %}

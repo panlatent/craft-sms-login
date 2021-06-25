@@ -1,0 +1,8 @@
+{% from '_includes/forms' import text %}
+
+{%- set id = field.handle|id %}
+{%- set descriptionId = descriptionId ?? "#{id}-desc" %}
+
+<div>
+  {{ value }}
+</div>

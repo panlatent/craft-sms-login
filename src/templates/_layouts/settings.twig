@@ -1,0 +1,36 @@
+{% extends "_layouts/cp" %}
+
+{% set title = 'Settings'|t('app') %}
+{% set selectedSubnavItem = 'settings' %}
+
+{% set navItems = {} %}
+
+{% if currentUser.admin %}
+    {% set navItems = {
+        'general': { title: "General"|t('app') },
+        'users': { title: "Users"|t('app') },
+        'senders': { title: "Senders"|t('smslogin') },
+    } %}
+{% endif %}
+
+{% if selectedItem is not defined %}
+    {% set selectedItem = craft.app.request.getSegment(3) %}
+{% endif %}
+
+{% set docTitle = navItems[selectedItem].title ~ ' - ' ~ title %}
+
+{% block sidebar %}
+    <nav>
+        <ul>
+            {% for id, item in navItems %}
+                {% if item.heading is defined %}
+                    <li class="heading"><span>{{ item.heading }}</span></li>
+                {% else %}
+                    <li>
+                        <a href="{{ url('smslogin/settings/'~id) }}"{% if id == selectedItem %} class="sel"{% endif %}>{{ item.title }}</a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+    </nav>
+{% endblock %}
