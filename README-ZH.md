@@ -9,7 +9,7 @@ Craft SMS Login
 [![Craft CMS](https://img.shields.io/badge/Powered_by-Craft_CMS-orange.svg?style=flat)](https://craftcms.com/)
 [![Yii2](https://img.shields.io/badge/Powered_by-Yii_Framework-green.svg?style=flat)](https://www.yiiframework.com/)
 
-Sign in or register with your mobile phone number and verification code, integrate multiple SMS providers, and provide rich templates, interfaces, and configuration items.
+使用手机号码及验证码登录或者注册，集成多个 SMS 提供商并提供丰富的模板、接口和配置项。
 
 Requirements
 ------------
