@@ -72,7 +72,12 @@ class SmsController extends Controller
     {
         $this->requirePostRequest();
 
-        $phone = $this->request->getBodyParam('username');
+        if (SmsLogin::$plugin->getSettings()->usePhoneNumberAsUsername) {
+            $phone = $this->request->getBodyParam('username');
+        } else {
+            $phone = $this->request->getBodyParam('phone');
+        }
+
         $token =  $this->request->getBodyParam('token');
         $code =  $this->request->getBodyParam('code');
 
