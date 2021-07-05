@@ -9,6 +9,7 @@ use craft\helpers\Session as SessionHelper;
 use craft\helpers\UrlHelper;
 use craft\web\Controller;
 use craft\web\ServiceUnavailableHttpException;
+use panlatent\craft\smslogin\errors\UserException;
 use panlatent\craft\smslogin\Plugin as SmsLogin;
 use panlatent\craft\smslogin\services\Sms;
 use panlatent\craft\smslogin\validators\PhoneNumberValidator;
@@ -29,6 +30,8 @@ class UsersController extends Controller
     const INVALID_PHONE_NUMBER = 'invalidPhoneNumber';
 
     const UNREGISTER_PHONE_NUMBER = 'unregisterPhoneNumber';
+
+    const REGISTER_FAILED = 'unregisterFailed';
 
     protected $allowAnonymous = [
         'login',
@@ -70,10 +73,18 @@ class UsersController extends Controller
         // Check phone number unregister.
         $user = SmsLogin::$plugin->getUsers()->getUserByPhone($phone);
         if (!$user) {
-            if (SmsLogin::$plugin->getSettings()->allowReserveVerifiedLogin) {
-                return $this->_handleReserveVerifiedLogin($phone);
+            if (SmsLogin::$plugin->getSettings()->allowImmediateRegisterOnLogin) {
+                $user = new User();
+                if (!$this->_registerByPhone($user, $phone)) {
+                    var_dump($user->getErrors());
+                    return $this->_handleLoginFailure(self::REGISTER_FAILED, $user);
+                }
+            } else {
+                if (SmsLogin::$plugin->getSettings()->allowReserveVerifiedLogin) {
+                    return $this->_handleReserveVerifiedLogin($phone);
+                }
+                return $this->_handleLoginFailure(self::UNREGISTER_PHONE_NUMBER);
             }
-            return $this->_handleLoginFailure(self::UNREGISTER_PHONE_NUMBER);
         }
 
         // Get the session duration
@@ -105,6 +116,7 @@ class UsersController extends Controller
         $settings = SmsLogin::$plugin->getSettings();
         $settings->phoneNumberFieldHandle = $params['phoneNumberFieldHandle'];
         $settings->usePhoneNumberAsUsername = (bool)$params['usePhoneNumberAsUsername'];
+        $settings->allowImmediateRegisterOnLogin = (bool)$params['allowImmediateRegisterOnLogin'];
         $settings->unregisterReturnUrl = $params['unregisterReturnUrl'];
         $settings->defaultRegisterEmail = $params['defaultRegisterEmail'];
         $settings->registerUserGroup = $params['registerUserGroup'];
@@ -227,6 +239,29 @@ class UsersController extends Controller
     }
 
     /**
+     * @param User $user
+     * @param string $phone
+     * @return bool
+     * @throws UserException
+     */
+    private function _registerByPhone(User $user, string $phone): bool
+    {
+        $user->email = $phone . '@' . SmsLogin::$plugin->getSettings()->getDefaultRegisterEmailDomain();
+        $user->username = $phone;
+        $user->setScenario(User::SCENARIO_REGISTRATION);
+        if (!SmsLogin::$plugin->getUsers()->canBindPhone($phone)) {
+            throw new UserException("{$phone} already exists");
+        }
+        if (!SmsLogin::$plugin->getUsers()->bindPhone($user, $phone, false)) {
+            return false;
+        }
+        if (!Craft::$app->getElements()->saveElement($user)) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
      * @param string $errorCode
      * @return string
      */
@@ -243,6 +278,8 @@ class UsersController extends Controller
                 return Craft::t('smslogin', 'Captcha expired');
             case sms::CAPTCHA_NOT_MATCH:
                 return Craft::t('smslogin', 'Captcha does not match');
+            case self::REGISTER_FAILED:
+                return Craft::t('smslogin', 'Register failed');
             default:
                 return Craft::t('smslogin', 'Invalid phone or captcha');
         }

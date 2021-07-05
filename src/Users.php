@@ -41,8 +41,15 @@ trait Users
             }
             /** @var UserElement $user */
             $user = $event->sender;
+
+            if ($this->getSettings()->usePhoneNumberAsUsername) {
+                $phone = Craft::$app->getRequest()->getBodyParam('username');
+            } else {
+                $phone = Craft::$app->getRequest()->getBodyParam('phone');
+            }
+
             if (($user->email === '' || $user->email === null) && $this->getSettings()->registerWithoutEmail) {
-                $user->email = $this->getSettings()->defaultRegisterEmail;
+                $user->email = $phone . '@' . $this->getSettings()->getDefaultRegisterEmailDomain();
             }
             if ($user->newPassword === '' && $this->getSettings()->registerWithoutPassword) {
                 $user->newPassword = StringHelper::randomString(UserPasswordValidator::MAX_PASSWORD_LENGTH, true);

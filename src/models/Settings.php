@@ -18,6 +18,11 @@ class Settings extends Model
     /**
      * @var bool
      */
+    public $allowImmediateRegisterOnLogin = false;
+
+    /**
+     * @var bool
+     */
     public $allowReserveVerifiedLogin = true;
 
     /**
@@ -47,8 +52,14 @@ class Settings extends Model
 
     /**
      * @var string
+     * @deprecated
      */
     public $defaultRegisterEmail = 'default@abc.test';
+
+    /**
+     * @var string
+     */
+    public $defaultRegisterEmailDomain = '';
 
     /**
      * @var
@@ -69,5 +80,16 @@ class Settings extends Model
     public function getPhoneNumberFieldHandle(): string
     {
         return Craft::parseEnv($this->phoneNumberFieldHandle) ?: '';
+    }
+
+    public function getDefaultRegisterEmailDomain(): string
+    {
+        $value = $this->defaultRegisterEmailDomain;
+        if ($value === '') {
+            if (($pos = strpos($this->defaultRegisterEmail, '@')) !== false) {
+                $value = substr($this->defaultRegisterEmail, $pos + 1);
+            }
+        }
+        return Craft::parseEnv($value);
     }
 }

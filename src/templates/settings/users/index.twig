@@ -27,6 +27,12 @@
         checked: settings.usePhoneNumberAsUsername,
     }) }}
 
+    {{ forms.checkboxField({
+        label: 'Allow immediate register on login'|t('smslogin'),
+        name: 'allowImmediateRegisterOnLogin',
+        checked: settings.allowImmediateRegisterOnLogin,
+    }) }}
+
     {{ forms.textField({
         label: 'Unregister return URL'|t('smslogin'),
         name: 'unregisterReturnUrl',

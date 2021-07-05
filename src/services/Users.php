@@ -39,7 +39,7 @@ class Users extends Component
         return $this->getUserByPhone($phone) === null;
     }
 
-    public function bindPhone(User $user, string $phone): bool
+    public function bindPhone(User $user, string $phone, bool $save = true): bool
     {
         $fieldHandle = Plugin::$plugin->getSettings()->getPhoneNumberFieldHandle();
         if ($fieldHandle === '') {
@@ -51,7 +51,7 @@ class Users extends Component
         }
 
         $user->setFieldValue($fieldHandle, $phone);
-        if (!Craft::$app->getElements()->saveElement($user, false)) {
+        if ($save && !Craft::$app->getElements()->saveElement($user, false)) {
             return false;
         }
 
