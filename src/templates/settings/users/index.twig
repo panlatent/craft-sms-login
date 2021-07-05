@@ -40,9 +40,9 @@
     }) }}
 
     {{ forms.textField({
-        label: 'Default register email'|t('smslogin'),
-        name: 'defaultRegisterEmail',
-        value: settings.defaultRegisterEmail,
+        label: 'Default register email domain'|t('smslogin'),
+        name: 'defaultRegisterEmailDomain',
+        value: settings.defaultRegisterEmailDomain,
     }) }}
 
     {% set groups = [{ label: "None"|t('app'), value: '' }] %}

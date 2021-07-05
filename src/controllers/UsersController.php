@@ -4,6 +4,7 @@ namespace panlatent\craft\smslogin\controllers;
 
 use Craft;
 use craft\elements\User;
+use craft\errors\UserGroupNotFoundException;
 use craft\events\LoginFailureEvent;
 use craft\helpers\Session as SessionHelper;
 use craft\helpers\UrlHelper;
@@ -118,7 +119,7 @@ class UsersController extends Controller
         $settings->usePhoneNumberAsUsername = (bool)$params['usePhoneNumberAsUsername'];
         $settings->allowImmediateRegisterOnLogin = (bool)$params['allowImmediateRegisterOnLogin'];
         $settings->unregisterReturnUrl = $params['unregisterReturnUrl'];
-        $settings->defaultRegisterEmail = $params['defaultRegisterEmail'];
+        $settings->defaultRegisterEmailDomain = $params['defaultRegisterEmailDomain'];
         $settings->registerUserGroup = $params['registerUserGroup'];
 
         if (!empty($settings->registerUserGroup) &&!Craft::$app->getUserGroups()->getGroupByUid($settings->registerUserGroup)) {
@@ -258,6 +259,16 @@ class UsersController extends Controller
         if (!Craft::$app->getElements()->saveElement($user)) {
             return false;
         }
+
+        $registerUserGroup = SmsLogin::$plugin->getSettings()->registerUserGroup;
+        if (!empty($registerUserGroup)) {
+            $group = Craft::$app->getUserGroups()->getGroupByUid($registerUserGroup);
+            if (!$group) {
+                throw new UserGroupNotFoundException();
+            }
+            Craft::$app->getUsers()->assignUserToGroups($user->id, [$group->id]);
+        }
+
         return true;
     }
 
