@@ -21,7 +21,7 @@ class Captcha extends Model
     public $id;
 
     /**
-     * @var string
+     * @var string Phone Number.
      */
     public $phone;
 

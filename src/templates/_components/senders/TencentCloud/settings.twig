@@ -1,0 +1,99 @@
+{% import "_includes/forms" as forms %}
+
+{{ forms.autosuggestField({
+    label: "Secret ID"|t('smslogin'),
+    instructions: "",
+    required: true,
+    id: "secretId",
+    name: "secretId",
+    value: sender.secretId,
+    errors: sender.getErrors('secretId'),
+    suggestEnvVars: true
+}) }}
+
+{{ forms.autosuggestField({
+    label: "Secret Key"|t('smslogin'),
+    instructions: "",
+    required: true,
+    id: 'secretKey',
+    name: "secretKey",
+    value: sender.secretKey,
+    errors: sender.getErrors('secretKey'),
+    suggestEnvVars: true
+}) }}
+
+{{ forms.autosuggestField({
+    label: "Region ID"|t('smslogin'),
+    instructions: "",
+    required: true,
+    id: 'regionId',
+    name: "regionId",
+    value: sender.regionId,
+    errors: sender.getErrors('regionId'),
+    suggestEnvVars: true
+}) }}
+
+{{ forms.autosuggestField({
+    label: "SMS SDK App ID"|t('smslogin'),
+    instructions: "",
+    required: true,
+    id: 'sdkAppId',
+    name: "sdkAppId",
+    value: sender.sdkAppId,
+    errors: sender.getErrors('sdkAppId'),
+    suggestEnvVars: true
+}) }}
+
+{{ forms.autosuggestField({
+    label: "Template ID"|t('smslogin'),
+    instructions: "",
+    required: true,
+    id: 'templateId',
+    name: "templateId",
+    value: sender.templateId,
+    errors: sender.getErrors('templateId'),
+    suggestEnvVars: true
+}) }}
+
+{{ forms.autosuggestField({
+    label: "Sign Name"|t('smslogin'),
+    instructions: "",
+    id: 'signName',
+    name: "signName",
+    value: sender.signName,
+    errors: sender.getErrors('signName'),
+    suggestEnvVars: true
+}) }}
+
+{% set templateParamOptions = [] %}
+{% for index, param in sender.templateParams %}
+    {% set templateParamOptions = templateParamOptions|merge({
+        (index): {
+            heading: index,
+            template: param.template ?? param,
+        }
+    })  %}
+{% endfor %}
+
+{{ forms.editableTable({
+    label: "Template Params"|t('smslogin'),
+    instructions: "",
+    id: 'templateParams',
+    name: "templateParams",
+    cols: {
+        heading: {
+            type: 'heading',
+            heading: "#"|t('smslogin'),
+            thin: true
+        },
+        template: {
+            type: 'singleline',
+            heading: "Param Template"|t('smslogin'),
+            info: "Support access varivables: code[string] / captcha[object] / sender[object] etc."|t('smslogin'),
+            placeholder: '{{ var }}',
+            code: true,
+        },
+    },
+    rows: templateParamOptions,
+    errors: sender.getErrors('templateParams'),
+}) }}

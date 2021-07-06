@@ -36,6 +36,11 @@ abstract class Sender extends SavableComponent implements SenderInterface
     public $handle;
 
     /**
+     * @var string|null UID
+     */
+    public $uid;
+
+    /**
      * @inheritdoc
      */
     public function rules()
@@ -43,7 +48,7 @@ abstract class Sender extends SavableComponent implements SenderInterface
         return array_merge(parent::rules(), [
             [['name', 'handle'], 'required'],
             [['id'], 'integer'],
-            [['name', 'handle'], 'string'],
+            [['name', 'handle', 'uid'], 'string'],
             [['name', 'handle'], UniqueValidator::class, 'targetClass' => SenderRecord::class],
             [['handle'], HandleValidator::class],
         ]);

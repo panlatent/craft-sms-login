@@ -17,6 +17,7 @@ use panlatent\craft\smslogin\events\SenderEvent;
 use panlatent\craft\smslogin\records\Sender as SenderRecord;
 use panlatent\craft\smslogin\senders\Aliyun;
 use panlatent\craft\smslogin\senders\MissingSender;
+use panlatent\craft\smslogin\senders\TencentCloud;
 use Throwable;
 use yii\base\Component;
 
@@ -39,6 +40,7 @@ class Senders extends Component
     const EVENT_BEFORE_DELETE_SENDER = 'beforeDeleteSender';
 
     const EVENT_AFTER_DELETE_SENDER = 'afterDeleteSender';
+
     // Properties
     // =========================================================================
 
@@ -50,10 +52,14 @@ class Senders extends Component
     // Public Methods
     // =========================================================================
 
+    /**
+     * @return string[]
+     */
     public function getAllSenderTypes(): array
     {
         $types = [
             Aliyun::class,
+            TencentCloud::class
         ];
 
         $event = new RegisterComponentTypesEvent([
@@ -98,7 +104,17 @@ class Senders extends Component
     }
 
     /**
+     * @param string $uid
      * @return SenderInterface|null
+     */
+    public function getSenderByUid(string $uid): ?SenderInterface
+    {
+        return ArrayHelper::firstWhere($this->getAllSenders(), 'uid', $uid);
+    }
+
+    /**
+     * @return SenderInterface|null
+     * @deprecated
      */
     public function getPrimarySender(): ?SenderInterface
     {
@@ -124,6 +140,11 @@ class Senders extends Component
         return $sender;
     }
 
+    /**
+     * @param SenderInterface $sender
+     * @param bool $runValidation
+     * @return bool
+     */
     public function saveSender(SenderInterface $sender, bool $runValidation = true): bool
     {
         /** @var Sender $sender */
@@ -190,8 +211,6 @@ class Senders extends Component
     /**
      * @param SenderInterface $sender
      * @return bool
-     * @throws Throwable
-     * @throws \yii\db\Exception
      */
     public function deleteSender(SenderInterface $sender): bool
     {
@@ -236,7 +255,7 @@ class Senders extends Component
     private function _createQuery(): Query
     {
         return (new Query())
-            ->select(['id', 'name', 'handle', 'type', 'settings'])
+            ->select(['id', 'name', 'handle', 'type', 'settings', 'uid'])
             ->from(Table::SENDERS);
     }
 }

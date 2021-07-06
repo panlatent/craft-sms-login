@@ -6,7 +6,8 @@
     "require": {
         "php": ">=7.2.5",
         "craftcms/cms": "^3.2",
-        "alibabacloud/dysmsapi-20170525": "1.0.1"
+        "alibabacloud/dysmsapi-20170525": "1.0.1",
+        "tencentcloud/sms": "^3.0"
     },
     "license": "MIT",
     "authors": [
