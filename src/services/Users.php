@@ -20,13 +20,21 @@ class Users extends Component
      */
     public function getUserByPhone(string $phone): ?User
     {
-        $fieldHandle = Plugin::$plugin->getSettings()->getPhoneNumberFieldHandle();
+        $settings = Plugin::$plugin->getSettings();
+        $fieldHandle = $settings->getPhoneNumberFieldHandle();
         if ($fieldHandle === '') {
             return null;
         }
 
+        if (version_compare(Craft::getVersion(), '3.7') === -1) {
+            $fieldColumn = 'content.field_' . $fieldHandle;
+        } else {
+            $field = Craft::$app->getFields()->getFieldByHandle($fieldHandle);
+            $fieldColumn = 'content.' . ($field->columnPrefix ?? 'field_') . $field->handle . '_'  . $field->columnSuffix;
+        }
+
         return User::find()->where([
-            'content.field_' . $fieldHandle => $phone
+            $fieldColumn => $phone
         ])->one();
     }
 
