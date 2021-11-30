@@ -26,7 +26,7 @@ class Users extends Component
             return null;
         }
 
-        if (version_compare(Craft::getVersion(), '3.7') === -1) {
+        if (version_compare(Craft::$app->getVersion(), '3.7') === -1) {
             $fieldColumn = 'content.field_' . $fieldHandle;
         } else {
             $field = Craft::$app->getFields()->getFieldByHandle($fieldHandle);
