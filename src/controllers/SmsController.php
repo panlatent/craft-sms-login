@@ -6,6 +6,7 @@ use craft\web\Controller;
 use panlatent\craft\smslogin\helpers\CaptchaHelper;
 use panlatent\craft\smslogin\models\Captcha;
 use panlatent\craft\smslogin\Plugin as SmsLogin;
+use panlatent\craft\smslogin\validators\PhoneNumberValidator;
 use yii\base\InvalidConfigException;
 use yii\web\Response;
 
@@ -16,8 +17,14 @@ use yii\web\Response;
  */
 class SmsController extends Controller
 {
+    /**
+     * @inheritdoc
+     */
     protected $allowAnonymous = ['send', 'validate'];
 
+    /**
+     * @inheritdoc
+     */
     public $enableCsrfValidation = false;
 
     /**
@@ -28,6 +35,12 @@ class SmsController extends Controller
         $this->requirePostRequest();
 
         $phone = $this->request->getBodyParam('phone');
+        if (!(new PhoneNumberValidator())->validate($phone)) {
+            return $this->asJson([
+                'error' => 'parameter error',
+            ]);
+        }
+
         $captcha = SmsLogin::$plugin->getSms()->getLastCaptchaByPhone($phone);
         if ($captcha) {
             $recoveryInterval = SmsLogin::$plugin->getSettings()->sendRecoveryInterval;
