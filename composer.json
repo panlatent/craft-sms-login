@@ -28,7 +28,7 @@
     },
     "minimum-stability": "stable",
     "extra": {
-        "name": "Smslogin",
+        "name": "SMS Login",
         "handle": "smslogin",
         "hasCpSettings": true,
         "hasCpSection": false,
