@@ -40,7 +40,7 @@ class Users extends Component
 
     public function canBindPhone(string $phone): bool
     {
-        $fieldHandle = Plugin::$plugin->getSettings()->getPhoneNumberFieldHandle();
+        $fieldHandle = Plugin::$plugin->getSettings()->phoneNumberField;
         if ($fieldHandle === '') {
             return false;
         }

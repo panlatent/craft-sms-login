@@ -96,6 +96,7 @@ class Sms extends Component
         $res = $this->_createQuery()
             ->where(['phone' => $phone, 'token' => $token])
             ->andWhere(['is', 'passedDate', null])
+            ->orderBy(['dateCreated' => SORT_DESC])
             ->one();
         if (!$res) {
             return self::CAPTCHA_NO_EXISTS;

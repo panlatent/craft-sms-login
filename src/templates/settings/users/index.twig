@@ -5,20 +5,31 @@
 {% set settings = craft.smslogin.settings %}
 {% import "_includes/forms" as forms %}
 
-
 {% block content %}
     {{ actionInput("smslogin/users/save-settings") }}
     {{ csrfInput() }}
 
-    {{ forms.autosuggestField({
-        label: "User phone number field handle"|t('smslogin'),
-        instructions: "",
+    {% set fields = [{ label: "None"|t('app'), value: '' }] %}
+    {% for field in craft.app.fields.getAllFields() %}
+        {% if className(field) == "panlatent\\craft\\smslogin\\fields\\Phone" %}
+            {% set fields = fields|merge([
+                {
+                    label: field.name,
+                    value: field.uid
+                }
+            ]) %}
+        {% endif %}
+    {% endfor %}
+
+    {{ forms.selectField({
+        label: "User phone number field"|t('smslogin'),
+        instructions: ""|t('smslogin'),
         required: true,
-        id: 'phoneNumberFieldHandle',
-        name: "phoneNumberFieldHandle",
-        value: settings.phoneNumberFieldHandle,
-        errors: settings.getErrors('phoneNumberFieldHandle'),
-        suggestEnvVars: true
+        id: 'phoneNumberField',
+        name: "phoneNumberField",
+        options: fields,
+        value: settings.phoneNumberField,
+        errors: settings.getErrors('phoneNumberField'),
     }) }}
 
     {{ forms.checkboxField({

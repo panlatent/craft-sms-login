@@ -42,7 +42,6 @@ class UsersController extends Controller
     /**
      * @return Response|null
      * @throws ServiceUnavailableHttpException
-     * @throws \craft\errors\UserNotFoundException
      */
     public function actionLogin(): ?Response
     {
@@ -56,7 +55,13 @@ class UsersController extends Controller
             return null;
         }
 
-        $phone = $this->request->getBodyParam('phone');
+        $phone = '';
+        if (SmsLogin::$plugin->getSettings()->usePhoneNumberAsUsername) {
+            $phone = $this->request->getBodyParam('username', '');
+        }
+        if ($phone === '') {
+            $phone = $this->request->getBodyParam('phone');
+        }
         $token = $this->request->getBodyParam('token');
         $code = $this->request->getBodyParam('code');
         $rememberMe = (bool)$this->request->getBodyParam('rememberMe');
@@ -115,7 +120,7 @@ class UsersController extends Controller
         $params = $this->request->getBodyParams();
 
         $settings = SmsLogin::$plugin->getSettings();
-        $settings->phoneNumberFieldHandle = $params['phoneNumberFieldHandle'];
+        $settings->phoneNumberField = $params['phoneNumberField'];
         $settings->usePhoneNumberAsUsername = (bool)$params['usePhoneNumberAsUsername'];
         $settings->allowImmediateRegisterOnLogin = (bool)$params['allowImmediateRegisterOnLogin'];
         $settings->unregisterReturnUrl = $params['unregisterReturnUrl'];

@@ -67,7 +67,14 @@ class Settings extends Model
     public $registerUserGroup;
 
     /**
+     * @var string Phone number field UID.
+     */
+    public $phoneNumberField;
+
+    /**
      * @var string|null
+     * @see $phoneNumberField
+     * @deprecated
      */
     public $phoneNumberFieldHandle;
 
@@ -77,6 +84,10 @@ class Settings extends Model
 
     public $sendRecoveryInterval = 60;
 
+    /**
+     * @deprecated
+     * @return string
+     */
     public function getPhoneNumberFieldHandle(): string
     {
         return Craft::parseEnv($this->phoneNumberFieldHandle) ?: '';

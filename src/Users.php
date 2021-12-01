@@ -81,7 +81,7 @@ trait Users
             }
 
             if (!$this->getUsers()->canBindPhone($phone)) {
-                $user->addError($this->getSettings()->usePhoneNumberAsUsername ? 'username' : $this->getSettings()->getPhoneNumberFieldHandle(), 'phone number already exists');
+                $user->addError($this->getSettings()->usePhoneNumberAsUsername ? 'username' : $this->getSettings()->phoneNumberField, 'phone number already exists');
                 $event->isValid = false;
             }
         });
