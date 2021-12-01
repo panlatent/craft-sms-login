@@ -6,6 +6,7 @@ use Craft;
 use craft\events\RegisterComponentTypesEvent;
 use craft\helpers\UrlHelper;
 use craft\services\Fields;
+use craft\services\Utilities;
 use craft\web\Application;
 use craft\web\twig\variables\CraftVariable;
 use panlatent\craft\smslogin\fields\Phone;
@@ -52,9 +53,11 @@ class Plugin extends \craft\base\Plugin
     public function init()
     {
         static::$plugin = $this;
+        $this->name = Craft::t('smslogin', $this->name);
 
         $this->_setComponents();
         $this->_registerFieldTypes();
+        $this->_registerUtilityTypes();
         $this->_registerUserEvents();
         $this->_registerUrlRules();
         $this->_registerVariables();
@@ -84,6 +87,13 @@ class Plugin extends \craft\base\Plugin
     {
         Event::on(Fields::class, Fields::EVENT_REGISTER_FIELD_TYPES, function(RegisterComponentTypesEvent $event) {
             $event->types[] = Phone::class;
+        });
+    }
+
+    private function _registerUtilityTypes()
+    {
+        Event::on(Utilities::class, Utilities::EVENT_REGISTER_UTILITY_TYPES, function(RegisterComponentTypesEvent $event) {
+
         });
     }
 
