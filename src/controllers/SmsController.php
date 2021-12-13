@@ -17,6 +17,10 @@ use yii\web\Response;
  */
 class SmsController extends Controller
 {
+    const INVALID_PHONE_NUMBER = 'invalidPhoneNumber';
+    const FATIGUE_PERIOD = 'fatiguePeriod';
+    const SEND_FAILURE = 'sendFailure';
+
     /**
      * @inheritdoc
      */
@@ -36,18 +40,15 @@ class SmsController extends Controller
 
         $phone = $this->request->getBodyParam('phone');
         if (!(new PhoneNumberValidator())->validate($phone)) {
-            return $this->asJson([
-                'error' => 'parameter error',
-            ]);
+            return $this->_handleSendFailure(self::INVALID_PHONE_NUMBER);
         }
 
         $captcha = SmsLogin::$plugin->getSms()->getLastCaptchaByPhone($phone);
         if ($captcha) {
             $recoveryInterval = SmsLogin::$plugin->getSettings()->sendRecoveryInterval;
             if (($interval = time() - $captcha->dateCreated->getTimestamp()) < $recoveryInterval) {
-                return $this->asJson([
-                    'error' => 'fatigue period',
-                    'recovery' => $recoveryInterval - $interval
+                return $this->_handleSendFailure(self::FATIGUE_PERIOD, [
+                    'recovery' => $recoveryInterval - $interval,
                 ]);
             }
         }
@@ -60,9 +61,7 @@ class SmsController extends Controller
         $captcha->code = CaptchaHelper::generateCodeNumber6();
 
         if (!SmsLogin::$plugin->getSms()->postCaptcha($captcha)) {
-            return $this->asJson([
-                'error' => 'send failed',
-            ]);
+            return $this->_handleSendFailure(self::SEND_FAILURE);
         }
 
         $sender = SmsLogin::$plugin->getSenders()->getPrimarySender();
@@ -70,9 +69,7 @@ class SmsController extends Controller
             throw new InvalidConfigException('Missing sender');
         }
         if (!$sender->send($captcha)) {
-            return $this->asJson([
-                'error' => 'send failed'
-            ]);
+            return $this->_handleSendFailure(self::SEND_FAILURE);
         }
 
         return $this->asJson([]);
@@ -91,8 +88,8 @@ class SmsController extends Controller
             $phone = $this->request->getBodyParam('phone');
         }
 
-        $token =  $this->request->getBodyParam('token');
-        $code =  $this->request->getBodyParam('code');
+        $token = $this->request->getBodyParam('token');
+        $code = $this->request->getBodyParam('code');
 
         $err = SmsLogin::$plugin->getSms()->testCaptcha($phone, $token, $code);
 
@@ -100,5 +97,33 @@ class SmsController extends Controller
             'error' => $err,
             'errorMessage' => $err,
         ]);
+    }
+
+    /**
+     * @param string $error
+     * @param array $params
+     * @return Response|null
+     */
+    private function _handleSendFailure(string $error, array $params = []): ?Response
+    {
+        switch ($error) {
+            case self::INVALID_PHONE_NUMBER:
+                $message = 'invalid phone number';
+                $code = 100001;
+                break;
+            case self::FATIGUE_PERIOD:
+                $message = 'fatigue period';
+                $code = 100002;
+                break;
+            case self::SEND_FAILURE:
+            default:
+                $message = 'send failed';
+                $code = 10000;
+        }
+
+        return $this->asJson(array_merge([
+            'error' => $message,
+            'code' => $code,
+        ], $params));
     }
 }
