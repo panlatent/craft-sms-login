@@ -23,17 +23,6 @@
 }) }}
 
 {{ forms.autosuggestField({
-    label: "Region ID"|t('smslogin'),
-    instructions: "",
-    required: true,
-    id: 'regionId',
-    name: "regionId",
-    value: sender.regionId,
-    errors: sender.getErrors('regionId'),
-    suggestEnvVars: true
-}) }}
-
-{{ forms.autosuggestField({
     label: "SMS SDK App ID"|t('smslogin'),
     instructions: "",
     required: true,
