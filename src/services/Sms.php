@@ -7,6 +7,7 @@ use craft\db\Query;
 use craft\helpers\DateTimeHelper;
 use DateInterval;
 use panlatent\craft\smslogin\db\Table;
+use panlatent\craft\smslogin\errors\CaptchaException;
 use panlatent\craft\smslogin\events\CaptchaEvent;
 use panlatent\craft\smslogin\models\Captcha;
 use yii\base\Component;
@@ -49,7 +50,7 @@ class Sms extends Component
     public function postCaptcha(Captcha $captcha, bool $runValidation = true): bool
     {
         if ($captcha->id) {
-            return false;
+           throw new CaptchaException("Not post a exists captcha");
         }
 
         if ($this->hasEventHandlers(self::EVENT_BEFORE_SAVE_CAPTCHA)) {
