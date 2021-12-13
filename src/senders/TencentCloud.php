@@ -24,6 +24,14 @@ class TencentCloud extends Sender
     const SMS_ENDPOINT = 'sms.tencentcloudapi.com';
 
     /**
+     * @inheritdoc
+     */
+    public static function displayName(): string
+    {
+        return Craft::t('smslogin', 'Tencent Cloud');
+    }
+
+    /**
      * @var string|null
      */
     public $secretId;
@@ -35,6 +43,7 @@ class TencentCloud extends Sender
 
     /**
      * @var string|null
+     * @deprecated
      */
     public $regionId;
 
@@ -81,6 +90,7 @@ class TencentCloud extends Sender
 
     /**
      * @return string|null
+     * @deprecated
      */
     public function getRegionId(): ?string
     {
@@ -123,7 +133,7 @@ class TencentCloud extends Sender
 
             $clientProfile = new ClientProfile();
             $clientProfile->setHttpProfile($httpProfile);
-            $this->_client = new SmsClient($cred, $this->getRegionId(), $clientProfile);
+            $this->_client = new SmsClient($cred, '', $clientProfile);
         }
         return $this->_client;
     }
@@ -168,11 +178,11 @@ class TencentCloud extends Sender
             $statuses = $resp->getSendStatusSet();
             $status = reset($statuses);
 
-            if ($status->getCode()!== '') {
-                Craft::error(self::displayName() . ': ' . sprintf('[%s]%s', $status->getPhoneNumber(), $status->getMessage()));
+            if ($status->getCode() !== '' && $status->getCode() !== 'OK') {
+                Craft::error(self::displayName() . ': ' . sprintf('[%s] [%s] %s', $status->getPhoneNumber(), $status->getCode(), $status->getMessage()));
                 return false;
             }
-        } catch(TencentCloudSDKException $e) {
+        } catch (TencentCloudSDKException $e) {
             Craft::error(self::displayName() . ': ' . $e->getMessage());
             throw new SenderException($e->getMessage());
         }
