@@ -128,6 +128,8 @@ class UsersController extends Controller
         $settings->unregisterReturnUrl = $params['unregisterReturnUrl'];
         $settings->defaultRegisterEmailDomain = $params['defaultRegisterEmailDomain'];
         $settings->registerUserGroup = $params['registerUserGroup'];
+        $settings->loginSender = $params['loginSender'];
+        $settings->registerSender = $params['registerSender'];
 
         if (!empty($settings->registerUserGroup) &&!Craft::$app->getUserGroups()->getGroupByUid($settings->registerUserGroup)) {
             Craft::$app->getSession()->setError(Craft::t('smslogin', 'Couldn’t save settings.'));

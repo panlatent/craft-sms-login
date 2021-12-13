@@ -73,6 +73,15 @@
     {% for sender in craft.smslogin.senders.getAllSenders() %}
         {% set senderOptions = senderOptions|merge([{ label: sender.name, value: sender.handle }]) %}
     {% endfor %}
+
+    {{ forms.selectField({
+        label: "Login Sender"|t('smslogin'),
+        instructions: ""|t('smslogin'),
+        name: 'loginSender',
+        options: senderOptions,
+        value: settings.loginSender
+    }) }}
+
     {{ forms.selectField({
         label: "Register Sender"|t('smslogin'),
         instructions: ""|t('smslogin'),
