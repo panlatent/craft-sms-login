@@ -34,9 +34,11 @@ class UsersController extends Controller
 
     const REGISTER_FAILED = 'unregisterFailed';
 
+    /**
+     * @inheritdoc
+     */
     protected $allowAnonymous = [
         'login',
-        'register',
     ];
 
     /**
@@ -256,7 +258,7 @@ class UsersController extends Controller
         $user->username = $phone;
         $user->setScenario(User::SCENARIO_REGISTRATION);
         if (!SmsLogin::$plugin->getUsers()->canBindPhone($phone)) {
-            throw new UserException("{$phone} already exists");
+            throw new UserException("$phone already exists");
         }
         if (!SmsLogin::$plugin->getUsers()->bindPhone($user, $phone, false)) {
             return false;
