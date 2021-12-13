@@ -2,10 +2,6 @@
 
 {% set title = isNewSender ? "New a sender" |t('smslogin') : 'Edit: {name}'|t('smslogin', {name: sender.name})  %}
 {% set fullPageForm = true %}
-{#{% set crumbs = [{#}
-{#    label: 'Schedule'|t('schedule'),#}
-{#    url: url('schedule')#}
-{#}] %}#}
 
 {% import "_includes/forms" as forms %}
 

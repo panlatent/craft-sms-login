@@ -64,8 +64,8 @@ class SmsController extends Controller
             return $this->_handleSendFailure(self::SEND_FAILURE);
         }
 
-        $sender = SmsLogin::$plugin->getSenders()->getPrimarySender();
-        if (!$sender) {
+        $senderHandle = SmsLogin::$plugin->getSettings()->getLoginSender();
+        if (!$senderHandle || !($sender = SmsLogin::$plugin->getSenders()->getSenderByHandle($senderHandle))) {
             throw new InvalidConfigException('Missing sender');
         }
         if (!$sender->send($captcha)) {

@@ -68,4 +68,16 @@
         options: groups,
         value: settings.registerUserGroup
     }) }}
+
+    {% set senderOptions = [{ label: "None"|t('app'), value: '' }] %}
+    {% for sender in craft.smslogin.senders.getAllSenders() %}
+        {% set senderOptions = senderOptions|merge([{ label: sender.name, value: sender.handle }]) %}
+    {% endfor %}
+    {{ forms.selectField({
+        label: "Register Sender"|t('smslogin'),
+        instructions: ""|t('smslogin'),
+        name: 'registerSender',
+        options: senderOptions,
+        value: settings.registerSender
+    }) }}
 {% endblock %}

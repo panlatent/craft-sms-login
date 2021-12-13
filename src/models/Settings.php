@@ -72,6 +72,16 @@ class Settings extends Model
     public $phoneNumberField;
 
     /**
+     * @var string Register use sender.
+     */
+    public $registerSender;
+
+    /**
+     * @var string Login use sender.
+     */
+    public $loginSender;
+
+    /**
      * @var string|null
      * @see $phoneNumberField
      * @deprecated
@@ -102,5 +112,15 @@ class Settings extends Model
             }
         }
         return Craft::parseEnv($value);
+    }
+
+    public function getRegisterSender(): string
+    {
+        return Craft::parseEnv($this->registerSender);
+    }
+
+    public function getLoginSender(): string
+    {
+        return Craft::parseEnv($this->loginSender);
     }
 }
